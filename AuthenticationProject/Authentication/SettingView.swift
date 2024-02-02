@@ -26,6 +26,19 @@ struct SettingView: View {
                 } label: {
                     Text("Log out")
                 }
+
+                Button {
+                    Task {
+                        do {
+                            try await viewModel.resetPassword()
+                            print("PASSWORD RESET")
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } label: {
+                    Text("Reset password")
+                }
                 .navigationTitle("Setting")
             }
         }

@@ -8,8 +8,9 @@
 import SwiftUI
 
 
-struct AuthEmailView: View {
-    @ObservedObject var viewModel: AuthEmailViewModel
+struct SignInEmailView: View {
+    @ObservedObject var viewModel: SignInEmailViewModel
+    @Binding var showSignInView: Bool
 
     var body: some View {
         VStack {
@@ -17,13 +18,29 @@ struct AuthEmailView: View {
                 .padding()
                 .background(Color.gray.opacity(0.3))
 
-
             SecureField("Password", text: $viewModel.password)
                 .padding()
                 .background(Color.gray.opacity(0.3))
 
             Button(action: {
-                viewModel.signIn()
+                Task {
+                    do {
+                        try await viewModel.signUp()
+                        showSignInView = false
+                        return
+                    } catch {
+                        print(error)
+                    }
+
+                    do {
+                        try await viewModel.signIn()
+                        showSignInView = false
+                        return
+                    } catch {
+                        print(error)
+                    }
+                }
+
             }, label: {
                 Text("Sign In")
                     .foregroundStyle(.white)
@@ -41,5 +58,5 @@ struct AuthEmailView: View {
 }
 
 #Preview {
-    AuthEmailView(viewModel: AuthEmailViewModel())
+    SignInEmailView(viewModel: SignInEmailViewModel(), showSignInView: .constant(false))
 }
